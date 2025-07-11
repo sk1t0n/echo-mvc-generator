@@ -1,5 +1,7 @@
-.PHONY: run_tests
+.PHONY: run_tests, run_cover_tests
 
 run_tests:
-	go test github.com/sk1t0n/echo-mvc-generator/cmd
-	go test github.com/sk1t0n/echo-mvc-generator/lib
+	go test ./... -coverprofile=c.out
+
+run_cover_tests:
+	go tool cover -func=c.out
