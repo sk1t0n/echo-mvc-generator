@@ -1,6 +1,6 @@
 # echo-mvc-generator
 
-CLI for creating a model, view or controller. The paths are the same as in the template [echo-mvc-template](https://github.com/sk1t0n/echo-mvc-template). Tech stack: Cobra.
+CLI for creating a model, view or controller. The paths are the same as in the template [echo-mvc-template](https://github.com/sk1t0n/echo-mvc-template). Tech stack: [Cobra](https://github.com/spf13/cobra).
 
 ## Install
 
@@ -19,4 +19,10 @@ echo-mvc-generator
 
 ```sh
 make run_tests
+```
+
+## Show code coverage
+
+```sh
+make run_cover_tests
 ```
