@@ -42,3 +42,16 @@ func GetEntityName(path string) string {
 
 	return entityName
 }
+
+func RemoveFilesAlongWithDir(dir string) {
+	files, err := filepath.Glob(filepath.Join(dir, "*"))
+	if err != nil {
+		return
+	}
+
+	for _, file := range files {
+		_ = os.Remove(file)
+	}
+
+	_ = os.Remove(dir)
+}

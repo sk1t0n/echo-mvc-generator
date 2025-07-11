@@ -1,6 +1,10 @@
 package cmd
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/sk1t0n/echo-mvc-generator/lib"
+)
 
 func Test_makeView(t *testing.T) {
 	tests := []struct {
@@ -24,6 +28,12 @@ func Test_makeView(t *testing.T) {
 			if tt.wantErr {
 				t.Fatalf("makeView(%s) succeeded unexpectedly", tt.path)
 			}
+		})
+
+		t.Cleanup(func() {
+			lib.RemoveFilesAlongWithDir("templates")
+			lib.RemoveFilesAlongWithDir("internal/templates")
+			lib.RemoveFilesAlongWithDir("internal")
 		})
 	}
 }

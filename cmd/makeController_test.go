@@ -59,4 +59,10 @@ func ({{.ControllerName}}) Index(c echo.Context) error {
 			}
 		})
 	}
+
+	t.Cleanup(func() {
+		lib.RemoveFilesAlongWithDir("controllers")
+		lib.RemoveFilesAlongWithDir("internal/app/http/controllers")
+		lib.RemoveFilesAlongWithDir("internal/app/http")
+	})
 }

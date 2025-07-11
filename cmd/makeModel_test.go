@@ -47,5 +47,10 @@ type {{.ModelName}} struct {
 				t.Fatalf("makeController(%s), content is invalid", tt.path)
 			}
 		})
+
+		t.Cleanup(func() {
+			lib.RemoveFilesAlongWithDir("models")
+			lib.RemoveFilesAlongWithDir("internal/app/models")
+		})
 	}
 }
