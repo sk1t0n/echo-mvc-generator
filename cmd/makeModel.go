@@ -18,7 +18,7 @@ var makeModelCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Example: `make:model user -> internal/app/models/user.go
 make:model User -> internal/app/models/User.go
-make:model models/user -> models/user.go 
+make:model models/user -> models/user.go
 make:model ./models/User.go -> models/User.go`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
@@ -65,7 +65,7 @@ func makeModel(path string) error {
 import "gorm.io/gorm"
 
 type {{.ModelName}} struct {
-	gorm.Model
+    gorm.Model
 }`
 
 	t := template.Must(template.New(entityName).Parse(content))

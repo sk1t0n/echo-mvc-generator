@@ -16,7 +16,7 @@ var makeViewCmd = &cobra.Command{
 	Short: "Make view",
 	Args:  cobra.ExactArgs(1),
 	Example: `make:view index -> internal/templates/index.html
-make:view templates/index -> templates/index.html 
+make:view templates/index -> templates/index.html
 make:view ./templates/index.html -> templates/index.html`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
