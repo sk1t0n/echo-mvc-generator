@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 )
 
 func MkdirAll(path string) error {
@@ -54,4 +55,23 @@ func RemoveFilesAlongWithDir(dir string) {
 	}
 
 	_ = os.Remove(dir)
+}
+
+func IsLower(s string) bool {
+	for _, r := range s {
+		if !unicode.IsLower(r) && unicode.IsLetter(r) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func RemoveLastSlash(s string) string {
+	if strings.Contains(s, "/") || strings.Contains(s, "\\") {
+		s = strings.TrimSuffix(s, "/")
+		s = strings.TrimSuffix(s, "\\")
+	}
+
+	return s
 }
