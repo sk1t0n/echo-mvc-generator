@@ -113,7 +113,7 @@ func updateRoutes(f string, modelName string) error {
 		}
 	}
 
-	err = os.WriteFile(f, []byte(data), 0644)
+	err = os.WriteFile(f, []byte(data), 0666)
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ const (
 
 func MkdirAll(path string) error {
 	if strings.Contains(path, "/") || strings.Contains(path, "\\") {
-		err := os.MkdirAll(filepath.Dir(path), 0755)
+		err := os.MkdirAll(filepath.Dir(path), 0777)
 		if err != nil {
 			return err
 		}

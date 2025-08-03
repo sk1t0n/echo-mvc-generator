@@ -21,7 +21,7 @@ func Test_updateRoutes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			data := "func RegisterRoutes(e *echo.Echo) {}"
-			err := os.WriteFile(tt.f, []byte(data), 0644)
+			err := os.WriteFile(tt.f, []byte(data), 0666)
 			if err != nil {
 				t.Fatalf("updateRoutes(%s, %s) failed: %v", tt.f, tt.modelName, err)
 			}
