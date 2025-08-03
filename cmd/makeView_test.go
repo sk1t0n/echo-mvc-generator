@@ -12,9 +12,9 @@ func Test_makeView(t *testing.T) {
 		path    string
 		wantErr bool
 	}{
-		{"file: lower case", "index", false},
-		{"file with dirs: lower case", "templates/index", false},
-		{"file with dirs: lower case", "./templates/index.html", false},
+		{"file:lower_case", "index", false},
+		{"file_with_dirs:lower_case", "templates/index", false},
+		{"file_with_dirs:lower_case", "./templates/index.html", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

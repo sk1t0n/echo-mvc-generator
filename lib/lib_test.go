@@ -7,38 +7,55 @@ import (
 )
 
 func TestGetEntityName(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
-		name string
-		path string
-		want string
+		name   string
+		path   string
+		format int
+		want   string
 	}{
-		{"file: snake case", "home_controller", "HomeController"},
-		{"file: pascal case", "HomeController", "HomeController"},
-		{"file with dirs: snake case", "controllers/home_controller", "HomeController"},
-		{"file with dirs: pascal case", "./controllers/HomeController.go", "HomeController"},
-		{"file: lower case", "user", "User"},
-		{"file: pascal case", "User", "User"},
-		{"file with dirs: lower case", "models/user", "User"},
-		{"file with dirs: pascal case", "./models/User.go", "User"},
+		{"file:pascal_case", "BlogPostController", lib.FormatEntityNamePascalCase, "BlogPost"},
+		{"file:pascal_case", "BlogPostController", lib.FormatEntityNameSnakeCase, "blog_post"},
+		{"file:snake_case", "blog_post_controller", lib.FormatEntityNameSnakeCase, "blog_post"},
+		{"file:snake_case", "blog_post_controller", lib.FormatEntityNamePascalCase, "BlogPost"},
+		{
+			"file_with_dirs:snake_case",
+			"controllers/home_controller",
+			lib.FormatEntityNamePascalCase,
+			"Home",
+		},
+		{
+			"file_with_dirs:pascal_case",
+			"./controllers/HomeController.go",
+			lib.FormatEntityNamePascalCase,
+			"Home",
+		},
+		{"file:lower_case", "user", lib.FormatEntityNamePascalCase, "User"},
+		{"file:pascal_case", "User", lib.FormatEntityNamePascalCase, "User"},
+		{"file_with_dirs:lower_case", "models/user", lib.FormatEntityNamePascalCase, "User"},
+		{"file_with_dirs:pascal_case", "./models/User.go", lib.FormatEntityNamePascalCase, "User"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := lib.GetEntityName(tt.path)
+			got := lib.GetEntityName(tt.path, tt.format)
 			if got != tt.want {
-				t.Errorf("GetEntityName(%s) = %s, want = %s", tt.path, got, tt.want)
+				t.Errorf("GetEntityName(%s, %d) = %s, want = %s", tt.path, tt.format, got, tt.want)
 			}
 		})
 	}
 }
 
 func TestIsLower(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		s    string
 		want bool
 	}{
-		{"lower case", "test", true},
-		{"pascal case", "Test", false},
+		{"lower_case", "test", true},
+		{"pascal_case", "Test", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -51,14 +68,16 @@ func TestIsLower(t *testing.T) {
 }
 
 func TestRemoveLastSlash(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		s    string
 		want string
 	}{
-		{"ends with a slash", "test/", "test"},
-		{"ends with a backslash", "test\\", "test"},
-		{"does not end with a slash", "test", "test"},
+		{"ends_with_a_slash", "test/", "test"},
+		{"ends_with_a_backslash", "test\\", "test"},
+		{"does_not_end_with_a_slash", "test", "test"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

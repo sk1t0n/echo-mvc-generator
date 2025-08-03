@@ -59,17 +59,17 @@ func makeModel(path string) error {
 		return err
 	}
 
-	entityName := lib.GetEntityName(path)
+	entityName := lib.GetEntityName(path, lib.FormatEntityNamePascalCase)
 	content := `package models
 
 import "gorm.io/gorm"
 
-type {{.ModelName}} struct {
+type {{.EntityName}} struct {
     gorm.Model
 }`
 
 	t := template.Must(template.New(entityName).Parse(content))
-	data := struct{ ModelName string }{ModelName: entityName}
+	data := struct{ EntityName string }{EntityName: entityName}
 	err = t.Execute(file, data)
 
 	return err

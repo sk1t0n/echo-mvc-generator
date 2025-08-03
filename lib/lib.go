@@ -1,15 +1,21 @@
 package lib
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
 	"unicode"
 )
 
+const (
+	FormatEntityNamePascalCase = iota
+	FormatEntityNameSnakeCase
+)
+
 func MkdirAll(path string) error {
 	if strings.Contains(path, "/") || strings.Contains(path, "\\") {
-		err := os.MkdirAll(filepath.Dir(path), os.FileMode(os.O_CREATE))
+		err := os.MkdirAll(filepath.Dir(path), 0755)
 		if err != nil {
 			return err
 		}
@@ -27,18 +33,41 @@ func CreateFile(path string) (*os.File, error) {
 	return file, nil
 }
 
-func GetEntityName(path string) string {
+func GetEntityName(path string, format int) string {
 	fileName := filepath.Base(path)
 	entityName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 
-	if strings.Contains(entityName, "_") {
-		words := strings.Split(entityName, "_")
-		for i, word := range words {
-			words[i] = strings.ToUpper(string(word[0])) + word[1:]
+	switch format {
+	case FormatEntityNamePascalCase:
+		if strings.Contains(entityName, "_") {
+			words := strings.Split(entityName, "_")
+			for i, word := range words {
+				words[i] = strings.ToUpper(string(word[0])) + word[1:]
+			}
+			entityName = strings.Join(words, "")
+		} else {
+			entityName = strings.ToUpper(string(entityName[0])) + entityName[1:]
 		}
-		entityName = strings.Join(words, "")
-	} else {
-		entityName = strings.ToUpper(string(entityName[0])) + entityName[1:]
+		entityName = strings.Replace(entityName, "Controller", "", 1)
+	case FormatEntityNameSnakeCase:
+		if strings.Contains(entityName, "_") {
+			entityName = strings.Replace(entityName, "_controller", "", 1)
+		} else {
+			entityName = strings.Replace(entityName, "Controller", "", 1)
+
+			var buf bytes.Buffer
+			for i, letter := range entityName {
+				if i == 0 && unicode.IsUpper(letter) {
+					buf.WriteRune(unicode.ToLower(letter))
+				} else if unicode.IsUpper(letter) {
+					buf.WriteRune('_')
+					buf.WriteRune(unicode.ToLower(letter))
+				} else {
+					buf.WriteRune(letter)
+				}
+			}
+			entityName = buf.String()
+		}
 	}
 
 	return entityName

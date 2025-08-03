@@ -49,10 +49,20 @@ func makeView(path string) error {
 	}
 
 	file, err := lib.CreateFile(path)
-	file.Close()
 	if err != nil {
 		return err
 	}
+	defer file.Close()
+	content := `{% extends "/internal/templates/layouts/base.html" %}
+
+{% macro Body %}
+  <h1>{{ title }}</h1>
+{% end %}`
+	_, err = file.WriteString(content)
+	if err != nil {
+		return err
+	}
+
 	if _, err = os.Stat(path); errors.Is(err, os.ErrNotExist) {
 		return err
 	}

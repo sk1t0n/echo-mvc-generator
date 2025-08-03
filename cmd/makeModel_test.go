@@ -14,10 +14,10 @@ func Test_makeModel(t *testing.T) {
 		path    string
 		wantErr bool
 	}{
-		{"file: lower case", "user", false},
-		{"file: pascal case", "User", false},
-		{"file with dirs: lower case", "models/user", false},
-		{"file with dirs: pascal case", "./models/User.go", false},
+		{"file:lower_case", "user", false},
+		{"file:pascal_case", "User", false},
+		{"file_with_dirs:lower_case", "models/user", false},
+		{"file_with_dirs:pascal_case", "./models/User.go", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -32,19 +32,20 @@ func Test_makeModel(t *testing.T) {
 				t.Fatalf("makeModel(%s) succeeded unexpectedly", tt.path)
 			}
 
-			entityName := lib.GetEntityName(tt.path)
+			entityName := lib.GetEntityName(tt.path, lib.FormatEntityNamePascalCase)
 			content := `package models
 
 import "gorm.io/gorm"
 
-type {{.ModelName}} struct {
+type {{.EntityName}} struct {
     gorm.Model
 }`
-			content = strings.ReplaceAll(content, "{{.ModelName}}", entityName)
+
+			content = strings.ReplaceAll(content, "{{.EntityName}}", entityName)
 
 			data, err := os.ReadFile(tt.path)
 			if err == nil && string(data) != content {
-				t.Fatalf("makeController(%s), content is invalid", tt.path)
+				t.Fatalf("makeModel(%s), content is invalid", tt.path)
 			}
 		})
 
