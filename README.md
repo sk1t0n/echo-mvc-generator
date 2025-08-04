@@ -11,7 +11,7 @@ go install github.com/sk1t0n/echo-mvc-generator@latest
 ## Run CLI
 
 ```sh
-# you need to set the GOBIN environment variable
+# you need to add ~/go/bin to your PATH environment variable
 echo-mvc-generator
 ```
 
