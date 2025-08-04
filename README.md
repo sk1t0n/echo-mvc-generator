@@ -1,5 +1,7 @@
 # echo-mvc-generator
 
+[![CI/CD](https://github.com/sk1t0n/echo-mvc-generator/actions/workflows/go.yml/badge.svg)](https://github.com/sk1t0n/echo-mvc-generator/actions/workflows/go.yml)
+
 CLI for creating a model, view or controller. The paths are the same as in the template [echo-mvc-template](https://github.com/sk1t0n/echo-mvc-template). If you wish, you can change the paths to your own. Tech stack: [Cobra](https://github.com/spf13/cobra).
 
 ## Install
