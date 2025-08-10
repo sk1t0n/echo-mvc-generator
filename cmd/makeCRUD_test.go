@@ -15,11 +15,11 @@ func Test_updateRoutes(t *testing.T) {
 		modelName string
 		wantErr   bool
 	}{
-		{"case1", "routes.go", "blog_post", false},
+		{"case1", "router.go", "blog_post", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			data := "func (r *Router) RegisterRoutes() {}"
+			data := "func (r *Router) registerRoutes() {}"
 			err := os.WriteFile(tt.f, []byte(data), 0666)
 			if err != nil {
 				t.Fatalf("updateRoutes(%s, %s) failed: %v", tt.f, tt.modelName, err)
@@ -51,6 +51,6 @@ func Test_updateRoutes(t *testing.T) {
 	}
 
 	t.Cleanup(func() {
-		_ = os.Remove("routes.go")
+		_ = os.Remove("router.go")
 	})
 }

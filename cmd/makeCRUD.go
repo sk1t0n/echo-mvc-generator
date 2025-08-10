@@ -88,9 +88,10 @@ func updateRoutes(f string, modelName string) error {
 		return err
 	}
 
-	idx := bytes.Index(dataRoutes, []byte("func (r *Router) registerRoutes() {"))
+	searchedText := "func (r *Router) registerRoutes() {"
+	idx := bytes.Index(dataRoutes, []byte(searchedText))
 	if idx == -1 {
-		return fmt.Errorf("failed to update routes in %s", f)
+		return fmt.Errorf(`not found "%s" in file`, searchedText)
 	}
 
 	var data string
