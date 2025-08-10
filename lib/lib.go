@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,7 +9,7 @@ import (
 
 const (
 	FormatEntityNamePascalCase = iota
-	FormatEntityNameSnakeCase
+	FormatEntityNameLowerCase
 )
 
 func MkdirAll(path string) error {
@@ -33,40 +32,29 @@ func CreateFile(path string) (*os.File, error) {
 	return file, nil
 }
 
+// Returns the entity name in pascal case or lower case.
+// Takes a file path in snake case.
+// Convert snake case to pascal case or lower case.
+// Convert lower case to pascal case.
 func GetEntityName(path string, format int) string {
 	fileName := filepath.Base(path)
 	entityName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
+	entityName = strings.Replace(entityName, "_controller", "", 1)
 
 	switch format {
 	case FormatEntityNamePascalCase:
-		if strings.Contains(entityName, "_") {
+		if strings.Contains(entityName, "_") { // snake case to pascal case
 			words := strings.Split(entityName, "_")
 			for i, word := range words {
 				words[i] = strings.ToUpper(string(word[0])) + word[1:]
 			}
 			entityName = strings.Join(words, "")
-		} else {
+		} else { // lower case to pascal case
 			entityName = strings.ToUpper(string(entityName[0])) + entityName[1:]
 		}
-		entityName = strings.Replace(entityName, "Controller", "", 1)
-	case FormatEntityNameSnakeCase:
-		if strings.Contains(entityName, "_") {
-			entityName = strings.Replace(entityName, "_controller", "", 1)
-		} else {
-			entityName = strings.Replace(entityName, "Controller", "", 1)
-
-			var buf bytes.Buffer
-			for i, letter := range entityName {
-				if i == 0 && unicode.IsUpper(letter) {
-					buf.WriteRune(unicode.ToLower(letter))
-				} else if unicode.IsUpper(letter) {
-					buf.WriteRune('_')
-					buf.WriteRune(unicode.ToLower(letter))
-				} else {
-					buf.WriteRune(letter)
-				}
-			}
-			entityName = buf.String()
+	case FormatEntityNameLowerCase:
+		if strings.Contains(entityName, "_") { // snake case to lower case
+			entityName = strings.Replace(entityName, "_", "", -1)
 		}
 	}
 

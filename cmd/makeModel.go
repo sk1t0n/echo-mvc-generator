@@ -9,17 +9,16 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 var makeModelCmd = &cobra.Command{
 	Use:   "make:model arg",
 	Short: "Make model",
 	Args:  cobra.ExactArgs(1),
-	Example: `make:model user -> internal/app/models/user.go
-make:model User -> internal/app/models/User.go
+	Example: `make:model user -> internal/entity/user.go
 make:model models/user -> models/user.go
-make:model ./models/User.go -> models/User.go`,
+make:model ./models/user.go -> models/user.go`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
 
@@ -42,7 +41,7 @@ func makeModel(path string) error {
 	}
 
 	if !strings.Contains(path, "/") && !strings.Contains(path, "\\") {
-		path = "internal/app/models/" + path
+		path = "internal/entity/" + path
 	}
 
 	err := lib.MkdirAll(path)
@@ -60,7 +59,7 @@ func makeModel(path string) error {
 	}
 
 	entityName := lib.GetEntityName(path, lib.FormatEntityNamePascalCase)
-	content := `package models
+	content := `package entity
 
 import "gorm.io/gorm"
 

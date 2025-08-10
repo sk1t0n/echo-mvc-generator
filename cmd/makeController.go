@@ -9,17 +9,16 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 var makeControllerCmd = &cobra.Command{
 	Use:   "make:controller arg",
 	Short: "Make controller",
 	Args:  cobra.ExactArgs(1),
-	Example: `make:controller home_controller -> internal/app/http/controllers/home_controller.go
-make:controller HomeController -> internal/app/http/controllers/HomeController.go
+	Example: `make:controller home_controller -> internal/controller/http/home_controller.go
 make:controller controllers/home_controller -> controllers/home_controller.go
-make:controller ./controllers/HomeController.go -> controllers/HomeController.go`,
+make:controller ./controllers/home_controller.go -> controllers/home_controller.go`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
 
@@ -42,7 +41,7 @@ func makeController(path string) error {
 	}
 
 	if !strings.Contains(path, "/") && !strings.Contains(path, "\\") {
-		path = "internal/app/http/controllers/" + path
+		path = "internal/controller/http/" + path
 	}
 
 	err := lib.MkdirAll(path)
@@ -60,7 +59,7 @@ func makeController(path string) error {
 	}
 
 	entityName := lib.GetEntityName(path, lib.FormatEntityNamePascalCase)
-	entityNameLower := lib.GetEntityName(path, lib.FormatEntityNameSnakeCase)
+	entityNameLower := lib.GetEntityName(path, lib.FormatEntityNameLowerCase)
 	content := getContentController()
 
 	t := template.Must(template.New(entityName).Parse(content))
@@ -77,12 +76,10 @@ func makeController(path string) error {
 }
 
 func getContentController() string {
-	return `package controllers
+	return `package http
 
 import (
-    "net/http"
-
-    "github.com/labstack/echo/v4"
+    "github.com/gofiber/fiber/v2"
     "github.com/open2b/scriggo/native"
 )
 
@@ -93,75 +90,87 @@ func New{{.EntityName}}Controller() {{.EntityName}}Controller {
     return {{.EntityName}}Controller{}
 }
 
-func ({{.EntityName}}Controller) Index(c echo.Context) error {
-    w := c.Response().Writer
+func ({{.EntityName}}Controller) Index(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Index | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/{{.EntityNameLower}}/index.html", globals, vars)
+    template := "web/templates/{{.EntityNameLower}}/index.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func ({{.EntityName}}Controller) Create(c echo.Context) error {
-    w := c.Response().Writer
+func ({{.EntityName}}Controller) Create(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Create | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/{{.EntityNameLower}}/create.html", globals, vars)
+    template := "web/templates/{{.EntityNameLower}}/create.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func ({{.EntityName}}Controller) Store(c echo.Context) error {
-    return c.String(http.StatusOK, "Store")
+func ({{.EntityName}}Controller) Store(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Store")
 }
 
-func ({{.EntityName}}Controller) Show(c echo.Context) error {
-    w := c.Response().Writer
+func ({{.EntityName}}Controller) Show(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Show | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/{{.EntityNameLower}}/show.html", globals, vars)
+    template := "web/templates/{{.EntityNameLower}}/show.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func ({{.EntityName}}Controller) Edit(c echo.Context) error {
-    w := c.Response().Writer
+func ({{.EntityName}}Controller) Edit(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Edit | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/{{.EntityNameLower}}/edit.html", globals, vars)
+    template := "web/templates/{{.EntityNameLower}}/edit.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func ({{.EntityName}}Controller) Update(c echo.Context) error {
-    return c.String(http.StatusOK, "Update")
+func ({{.EntityName}}Controller) Update(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Update")
 }
 
-func ({{.EntityName}}Controller) Destroy(c echo.Context) error {
-    return c.String(http.StatusOK, "Destroy")
+func ({{.EntityName}}Controller) Destroy(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Destroy")
 }`
 }

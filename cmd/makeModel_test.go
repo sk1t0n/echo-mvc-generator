@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 func Test_makeModel(t *testing.T) {
@@ -14,10 +14,9 @@ func Test_makeModel(t *testing.T) {
 		path    string
 		wantErr bool
 	}{
-		{"file:lower_case", "user", false},
-		{"file:pascal_case", "User", false},
-		{"file_with_dirs:lower_case", "models/user", false},
-		{"file_with_dirs:pascal_case", "./models/User.go", false},
+		{"file", "user", false},
+		{"file_with_dirs", "models/user", false},
+		{"file_with_dirs", "./models/user.go", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -33,7 +32,7 @@ func Test_makeModel(t *testing.T) {
 			}
 
 			entityName := lib.GetEntityName(tt.path, lib.FormatEntityNamePascalCase)
-			content := `package models
+			content := `package entity
 
 import "gorm.io/gorm"
 
@@ -51,7 +50,8 @@ type {{.EntityName}} struct {
 
 		t.Cleanup(func() {
 			lib.RemoveFilesAlongWithDir("models")
-			lib.RemoveFilesAlongWithDir("internal/app/models")
+			lib.RemoveFilesAlongWithDir("internal/entity")
+			lib.RemoveFilesAlongWithDir("internal")
 		})
 	}
 }

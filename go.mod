@@ -1,4 +1,4 @@
-module github.com/sk1t0n/echo-mvc-generator
+module github.com/sk1t0n/fiber-mvc-generator
 
 go 1.24.0
 

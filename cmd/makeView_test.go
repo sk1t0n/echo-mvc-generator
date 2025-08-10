@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 func Test_makeView(t *testing.T) {
@@ -12,9 +12,9 @@ func Test_makeView(t *testing.T) {
 		path    string
 		wantErr bool
 	}{
-		{"file:lower_case", "index", false},
-		{"file_with_dirs:lower_case", "templates/index", false},
-		{"file_with_dirs:lower_case", "./templates/index.html", false},
+		{"file", "index", false},
+		{"file_with_dirs", "templates/post/index", false},
+		{"file_with_dirs", "./templates/index.html", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -31,9 +31,10 @@ func Test_makeView(t *testing.T) {
 		})
 
 		t.Cleanup(func() {
+			lib.RemoveFilesAlongWithDir("templates/post")
 			lib.RemoveFilesAlongWithDir("templates")
-			lib.RemoveFilesAlongWithDir("internal/templates")
-			lib.RemoveFilesAlongWithDir("internal")
+			lib.RemoveFilesAlongWithDir("web/templates")
+			lib.RemoveFilesAlongWithDir("web")
 		})
 	}
 }

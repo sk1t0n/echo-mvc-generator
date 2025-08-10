@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 func Test_updateRoutes(t *testing.T) {
@@ -15,12 +15,11 @@ func Test_updateRoutes(t *testing.T) {
 		modelName string
 		wantErr   bool
 	}{
-		{"snake_case", "routes.go", "blog_post", false},
-		{"pascal_case", "routes.go", "BlogPost", false},
+		{"case1", "routes.go", "blog_post", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			data := "func RegisterRoutes(e *echo.Echo) {}"
+			data := "func (r *Router) RegisterRoutes() {}"
 			err := os.WriteFile(tt.f, []byte(data), 0666)
 			if err != nil {
 				t.Fatalf("updateRoutes(%s, %s) failed: %v", tt.f, tt.modelName, err)

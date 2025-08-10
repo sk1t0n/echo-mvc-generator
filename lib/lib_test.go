@@ -3,7 +3,7 @@ package lib_test
 import (
 	"testing"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 func TestGetEntityName(t *testing.T) {
@@ -15,26 +15,36 @@ func TestGetEntityName(t *testing.T) {
 		format int
 		want   string
 	}{
-		{"file:pascal_case", "BlogPostController", lib.FormatEntityNamePascalCase, "BlogPost"},
-		{"file:pascal_case", "BlogPostController", lib.FormatEntityNameSnakeCase, "blog_post"},
-		{"file:snake_case", "blog_post_controller", lib.FormatEntityNameSnakeCase, "blog_post"},
-		{"file:snake_case", "blog_post_controller", lib.FormatEntityNamePascalCase, "BlogPost"},
 		{
-			"file_with_dirs:snake_case",
+			"file:snake_case_to_lower_case",
+			"blog_category_controller",
+			lib.FormatEntityNameLowerCase,
+			"blogcategory",
+		},
+		{
+			"file:snake_case_to_pascal_case",
+			"blog_category_controller",
+			lib.FormatEntityNamePascalCase,
+			"BlogCategory",
+		},
+		{
+			"file_with_dirs:snake_case_to_lower_case",
 			"controllers/home_controller",
+			lib.FormatEntityNameLowerCase,
+			"home",
+		},
+		{
+			"file_with_dirs:snake_case_to_pascal_case",
+			"./controllers/home_controller.go",
 			lib.FormatEntityNamePascalCase,
 			"Home",
 		},
 		{
-			"file_with_dirs:pascal_case",
-			"./controllers/HomeController.go",
+			"file_with_dirs:lower_case_to_pascal_case",
+			"internal/entity/user",
 			lib.FormatEntityNamePascalCase,
-			"Home",
+			"User",
 		},
-		{"file:lower_case", "user", lib.FormatEntityNamePascalCase, "User"},
-		{"file:pascal_case", "User", lib.FormatEntityNamePascalCase, "User"},
-		{"file_with_dirs:lower_case", "models/user", lib.FormatEntityNamePascalCase, "User"},
-		{"file_with_dirs:pascal_case", "./models/User.go", lib.FormatEntityNamePascalCase, "User"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

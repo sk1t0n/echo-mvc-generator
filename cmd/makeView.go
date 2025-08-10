@@ -8,15 +8,15 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 var makeViewCmd = &cobra.Command{
 	Use:   "make:view arg",
 	Short: "Make view",
 	Args:  cobra.ExactArgs(1),
-	Example: `make:view index -> internal/templates/index.html
-make:view templates/index -> templates/index.html
+	Example: `make:view index -> web/templates/index.html
+make:view templates/post/index -> templates/post/index.html
 make:view ./templates/index.html -> templates/index.html`,
 	Run: func(cmd *cobra.Command, args []string) {
 		path := args[0]
@@ -40,7 +40,7 @@ func makeView(path string) error {
 	}
 
 	if !strings.Contains(path, "/") && !strings.Contains(path, "\\") {
-		path = "internal/templates/" + path
+		path = "web/templates/" + path
 	}
 
 	err := lib.MkdirAll(path)
@@ -53,7 +53,7 @@ func makeView(path string) error {
 		return err
 	}
 	defer file.Close()
-	content := `{% extends "/internal/templates/layouts/base.html" %}
+	content := `{% extends "/web/templates/layouts/base.html" %}
 
 {% macro Body %}
   <h1>{{ title }}</h1>

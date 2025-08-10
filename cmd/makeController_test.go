@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sk1t0n/echo-mvc-generator/lib"
+	"github.com/sk1t0n/fiber-mvc-generator/lib"
 )
 
 func Test_makeController(t *testing.T) {
@@ -14,10 +14,9 @@ func Test_makeController(t *testing.T) {
 		path    string
 		wantErr bool
 	}{
-		{"file:snake_case", "home_controller", false},
-		{"file:pascal_case", "HomeController", false},
-		{"file_with_dirs:snake_case", "controllers/home_controller", false},
-		{"file_with_dirs:pascal_case", "./controllers/HomeController.go", false},
+		{"file", "home_controller", false},
+		{"file_with_dirs", "controllers/home_controller", false},
+		{"file_with_dirs", "./controllers/category_controller.go", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -33,7 +32,7 @@ func Test_makeController(t *testing.T) {
 			}
 
 			entityName := lib.GetEntityName(tt.path, lib.FormatEntityNamePascalCase)
-			entityNameLower := lib.GetEntityName(tt.path, lib.FormatEntityNameSnakeCase)
+			entityNameLower := lib.GetEntityName(tt.path, lib.FormatEntityNameLowerCase)
 			content := getContentController()
 			content = strings.ReplaceAll(content, "{{.EntityName}}", entityName)
 			content = strings.ReplaceAll(content, "{{.EntityNameLower}}", entityNameLower)
@@ -47,19 +46,17 @@ func Test_makeController(t *testing.T) {
 
 	t.Cleanup(func() {
 		lib.RemoveFilesAlongWithDir("controllers")
-		lib.RemoveFilesAlongWithDir("internal/app/http/controllers")
-		lib.RemoveFilesAlongWithDir("internal/app/http")
+		lib.RemoveFilesAlongWithDir("internal/controller/http")
+		lib.RemoveFilesAlongWithDir("internal/controller")
 	})
 }
 
 func Test_getContentController(t *testing.T) {
 	content := getContentController()
-	want := `package controllers
+	want := `package http
 
 import (
-    "net/http"
-
-    "github.com/labstack/echo/v4"
+    "github.com/gofiber/fiber/v2"
     "github.com/open2b/scriggo/native"
 )
 
@@ -70,80 +67,92 @@ func NewPostController() PostController {
     return PostController{}
 }
 
-func (PostController) Index(c echo.Context) error {
-    w := c.Response().Writer
+func (PostController) Index(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Index | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/post/index.html", globals, vars)
+    template := "web/templates/post/index.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func (PostController) Create(c echo.Context) error {
-    w := c.Response().Writer
+func (PostController) Create(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Create | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/post/create.html", globals, vars)
+    template := "web/templates/post/create.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func (PostController) Store(c echo.Context) error {
-    return c.String(http.StatusOK, "Store")
+func (PostController) Store(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Store")
 }
 
-func (PostController) Show(c echo.Context) error {
-    w := c.Response().Writer
+func (PostController) Show(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Show | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/post/show.html", globals, vars)
+    template := "web/templates/post/show.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func (PostController) Edit(c echo.Context) error {
-    w := c.Response().Writer
+func (PostController) Edit(c *fiber.Ctx) error {
     globals := native.Declarations{
         "title": "Edit | Project",
     }
     vars := map[string]any{}
 
-    err := templates.RenderTemplate(w, "internal/templates/post/edit.html", globals, vars)
+    template := "web/templates/post/edit.html"
+    err := templates.RenderTemplate(c, template, globals, vars)
     if err != nil {
-        return echo.NewHTTPError(http.StatusInternalServerError, "something unexpected happened")
+        return fiber.NewError(
+            fiber.StatusInternalServerError,
+            "failed to render template "+template,
+        )
     }
 
     return nil
 }
 
-func (PostController) Update(c echo.Context) error {
-    return c.String(http.StatusOK, "Update")
+func (PostController) Update(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Update")
 }
 
-func (PostController) Destroy(c echo.Context) error {
-    return c.String(http.StatusOK, "Destroy")
+func (PostController) Destroy(c *fiber.Ctx) error {
+    return c.SendString(fiber.StatusOK, "Destroy")
 }`
 
 	entityName := lib.GetEntityName("post_controller", lib.FormatEntityNamePascalCase)
-	entityNameLower := lib.GetEntityName("post_controller", lib.FormatEntityNameSnakeCase)
+	entityNameLower := lib.GetEntityName("post_controller", lib.FormatEntityNameLowerCase)
 	content = strings.ReplaceAll(content, "{{.EntityName}}", entityName)
 	content = strings.ReplaceAll(content, "{{.EntityNameLower}}", entityNameLower)
 
