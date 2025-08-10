@@ -88,13 +88,17 @@ func updateRoutes(f string, modelName string) error {
 		return err
 	}
 
-	idx := bytes.Index(dataRoutes, []byte("func (r *Router) RegisterRoutes() {"))
+	idx := bytes.Index(dataRoutes, []byte("func (r *Router) registerRoutes() {"))
+	if idx == -1 {
+		return fmt.Errorf("failed to update routes in %s", f)
+	}
+
 	var data string
 	for i := idx; i < len(dataRoutes); i++ {
 		if dataRoutes[i] == '}' {
 			entityName := lib.GetEntityName(modelName, lib.FormatEntityNamePascalCase)
 			entityNameLower := lib.GetEntityName(modelName, lib.FormatEntityNameLowerCase)
-			callFunc := "\n    registerResource(\"" +
+			callFunc := "\n    r.registerResource(\"" +
 				entityNameLower +
 				`", http.New` +
 				entityName +
