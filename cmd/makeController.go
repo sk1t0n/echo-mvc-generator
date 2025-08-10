@@ -127,7 +127,7 @@ func ({{.EntityName}}Controller) Create(c *fiber.Ctx) error {
 }
 
 func ({{.EntityName}}Controller) Store(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Store")
+    return c.SendString("Store")
 }
 
 func ({{.EntityName}}Controller) Show(c *fiber.Ctx) error {
@@ -167,10 +167,10 @@ func ({{.EntityName}}Controller) Edit(c *fiber.Ctx) error {
 }
 
 func ({{.EntityName}}Controller) Update(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Update")
+    return c.SendString("Update")
 }
 
 func ({{.EntityName}}Controller) Destroy(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Destroy")
+    return c.SendString("Destroy")
 }`
 }

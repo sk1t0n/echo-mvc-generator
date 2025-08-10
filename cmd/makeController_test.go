@@ -104,7 +104,7 @@ func (PostController) Create(c *fiber.Ctx) error {
 }
 
 func (PostController) Store(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Store")
+    return c.SendString("Store")
 }
 
 func (PostController) Show(c *fiber.Ctx) error {
@@ -144,11 +144,11 @@ func (PostController) Edit(c *fiber.Ctx) error {
 }
 
 func (PostController) Update(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Update")
+    return c.SendString("Update")
 }
 
 func (PostController) Destroy(c *fiber.Ctx) error {
-    return c.SendString(fiber.StatusOK, "Destroy")
+    return c.SendString("Destroy")
 }`
 
 	entityName := lib.GetEntityName("post_controller", lib.FormatEntityNamePascalCase)
